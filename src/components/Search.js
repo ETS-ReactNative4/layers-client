@@ -56,64 +56,37 @@ export default function Search(props) {
   const [term, setTerm] = useState("");
   const [results, setResults] = useState([]);
   const [isSongSelected, setIsSongSelected] = useState({});
-  const [isSearching, setIsSearching] = useState(false);
-
-  const debouncedSearchTerm = useDebounce(term, 200);
-
-  useEffect(
-    () => {
-      // Make sure we have a value (user has entered something in input)
-      if (debouncedSearchTerm) {
-        setIsSearching(true);
-      }
-    }, [debouncedSearchTerm]);
-
 
   //SEARCH QUERY
   useEffect(() => {
-    axios({
-      //gets fill data from itunes
-      method: 'get',
-      url: `https://itunes.apple.com/search?term=${term.toLowerCase()}&country=CA&media=music&entity=song`
-    })
-      //gets our actual db data
-      .catch(err => console.log(err))
-      .then(data1 => {
-        axios.get(`api/content/search/${term.toLowerCase()}`)
-          .then(data2 => {
-            const response = []
-            if (data2.data.length > 0) {
-              const data2formatted = data2.data.map(entry => {
-                return {
-                  trackId: entry.id,
-                  artistName: entry.artist,
-                  artworkUrl100: entry.url_album_artwork,
-                  trackName: entry.title,
-                  collectionName: entry.album,
-                  previewUrl: entry.url_full_song_preview
-                }
-              })
-              response.push(...data2formatted)
+    axios.get(`/api/content/`)
+      .then( data => {
+        const response = []
+        if (data.data.songs.length > 0) {
+          const dataFormatted = data.data.songs.map(entry => {
+            return {
+              trackId: entry.id,
+              artistName: entry.artist,
+              artworkUrl100: entry.url_album_artwork,
+              trackName: entry.title,
+              collectionName: entry.album,
+              previewUrl: entry.url_full_song_preview
             }
-            //construct 600x600 URL from artworkURL100
-            const hiResItunes = data1.data.results.map(entry => {
-              const newURL = entry.artworkUrl100.replace('100x100bb.jpg', '600x600bb.jpg')
-              entry.artworkUrl100 = newURL
-              return entry;
-
-            })
-            response.push(...hiResItunes)
-            setResults(response);
-            //once we have results
-            setIsSearching(false);
           })
-          .catch(err => console.log(err))
+          response.push(...dataFormatted)
+        }
+        setResults(response);
       })
-  }, [debouncedSearchTerm])
+      .catch(err => console.log(err))
+  }, [])
 
   const handleChange = (event) => {
     setTerm(event.target.value)
   }
+
+  const filteredResults = results.filter(result => {
+    return result.artistName.toLowerCase().includes(term.toLowerCase());
+  })
 
   const classes = useStyles();
   return !isSongSelected.trackName ? (
@@ -130,7 +103,7 @@ export default function Search(props) {
               component="h1"
               variant="h4"
               color="var(--white)">
-              Search
+              Search By Artist
                </Typography>
             {matches && <TextField
               autoFocus
@@ -154,7 +127,7 @@ export default function Search(props) {
           }} />}
         <Container className={classes.cardGrid} maxWidth="md" id="results">
           <Grid container spacing={4}>
-            <Results results={results} setSong={setIsSongSelected}></Results>
+            <Results results={filteredResults} setSong={setIsSongSelected}></Results>
           </Grid>
         </Container>
       </div>

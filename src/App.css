@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400;500;700;900&display=swap');
+
+:root {
+  --black: rgb(26, 26, 26);
+  --white: rgb(244, 240, 234);
+
+  /* testing lightmode */
+  /* --black: rgb(244, 240, 234);
+  --white: rgb(26, 26, 26); */
+
+  --primary-color: rgb(245, 103, 93);
+  --secondary-color: #ffff6f;
+  --tertiary-color: rgb(80, 32, 28);
+  --quad-color: rgb(92, 255, 198);
+
+}
+
+body {
+  background-image: url("https://www.transparenttextures.com/patterns/otis-redding.png");
+  background: var(--black);
+  color: var(--white);
+  margin-bottom: 10%;
+
+}
+
+.App {
+  font-family: 'Noto Sans', sans-serif;
+  text-align: center;
+}
+
+hr {
+  color: var(--white);
+  opacity: 10%;
+  width: 90%;
+}
+
+Waveform {
+  z-index: 1;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  color: var(--white);
+}
+a:visited {
+  color: var(--white);
+}
+
+header {
+  font-size: 2em;
+}
+
+.main-window {
+  padding-bottom: 10vh;
+}
